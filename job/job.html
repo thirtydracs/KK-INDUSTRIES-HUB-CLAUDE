@@ -1,1 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- FIX: Page title updated dynamically via JS below -->
+  <title>K&amp;K Industries Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 16px;
+      color: #1f2933;
+    }
+
+    .wrap {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* FIX: Top header section gets status-coloured left border to match index cards */
+    .top {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border-left: 6px solid #e5e7eb;
+    }
+
+    .top.red   { border-left-color: #dc2626; }
+    .top.amber { border-left-color: #f59e0b; }
+    .top.green { border-left-color: #16a34a; }
+    .top.grey  { border-left-color: #6b7280; }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .week {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .badge.red   { background: #fee2e2; color: #991b1b; }
+    .badge.amber { background: #fef3c7; color: #92400e; }
+    .badge.green { background: #dcfce7; color: #166534; }
+    .badge.grey  { background: #e5e7eb; color: #374151; }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    /* FIX: Card section heading for grouped cards */
+    .card-heading {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #6b7280;
+      margin-bottom: 4px;
+      font-weight: bold;
+    }
+
+    .value {
+      font-size: 17px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+
+    .value:last-child {
+      margin-bottom: 0;
+    }
+
+    /* FIX: Data Confidence badge styling */
+    .confidence-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .confidence-badge.good   { background: #dcfce7; color: #166534; }
+    .confidence-badge.medium { background: #fef3c7; color: #92400e; }
+    .confidence-badge.low    { background: #fee2e2; color: #991b1b; }
+
+    .day {
+      padding: 12px 0;
+      border-top: 1px solid #e5e7eb;
+      line-height: 1.5;
+    }
+
+    .day:first-child {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .day-label {
+      font-weight: bold;
+      font-size: 14px;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    .day-text {
+      font-size: 15px;
+      color: #1f2933;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 14px;
+      text-decoration: none;
+      font-weight: bold;
+      color: #0f62fe;
+    }
+
+    .back:hover {
+      text-decoration: underline;
+    }
+
+    .not-found {
+      background: white;
+      border-radius: 14px;
+      padding: 18px;
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+
+      .top,
+      .card,
+      .not-found { padding: 16px; }
+
+      h1 { font-size: 24px; }
+
+      .value { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../index.html">← Back to Hub</a>
+
+    <div class="top" id="topCard">
+      <h1 id="jobName">Job</h1>
+      <div class="week" id="week"></div>
+      <div id="statusBadge" class="badge">Status</div>
+    </div>
+
+    <!-- FIX: Split into two logical cards — Status card + Assessment card -->
+    <div class="card">
+      <div class="card-heading">Site Status</div>
+
+      <div class="label">Issue</div>
+      <div class="value" id="issue"></div>
+
+      <div class="label">Holding Up</div>
+      <div class="value" id="holdingUp"></div>
+
+      <div class="label">Labour</div>
+      <div class="value" id="labour"></div>
+
+      <div class="label">Critical Path</div>
+      <div class="value" id="criticalPath"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-heading">Assessment</div>
+
+      <div class="label">Reality</div>
+      <div class="value" id="reality"></div>
+
+      <div class="label">Next</div>
+      <div class="value" id="next"></div>
+
+      <div class="label">Data Confidence</div>
+      <!-- FIX: Data Confidence rendered as coloured badge -->
+      <div class="value"><span class="confidence-badge" id="dataConfidence"></span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-heading">Week Activity</div>
+      <div id="activity"></div>
+    </div>
+  </div>
+
+  <script src="../data.js"></script>
+  <script>
+    // Shared status label function
+    function niceStatus(status) {
+      if (status === "red")   return "At Risk";
+      if (status === "amber") return "Watch";
+      if (status === "green") return "On Track";
+      if (status === "grey")  return "Blind Spot";
+      return status;
+    }
+
+    // FIX: Data confidence to CSS class
+    function confidenceClass(confidence) {
+      if (!confidence) return "";
+      const val = confidence.toLowerCase();
+      if (val === "good")   return "good";
+      if (val === "medium") return "medium";
+      if (val === "low")    return "low";
+      return "";
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const job = jobs.find(j => j.id === id);
+
+    if (!job) {
+      document.querySelector(".wrap").innerHTML = `
+        <div class="not-found">
+          <h2>Job not found</h2>
+          <p>Check the link and try again.</p>
+          <a class="back" href="../index.html">← Back to Hub</a>
+        </div>
+      `;
+    } else {
+      // FIX: Dynamic page title
+      document.title = job.name + " — K&K Industries Hub";
+
+      document.getElementById("jobName").textContent = job.name;
+      document.getElementById("week").textContent = job.week || "";
+
+      // FIX: Status badge shows human-readable label, not raw string
+      const badge = document.getElementById("statusBadge");
+      badge.textContent = niceStatus(job.status);
+      badge.classList.add(job.status);
+
+      // FIX: Top card gets matching coloured border
+      document.getElementById("topCard").classList.add(job.status);
+
+      document.getElementById("issue").textContent        = job.issue || "";
+      document.getElementById("holdingUp").textContent    = job.holdingUp || "";
+      document.getElementById("labour").textContent       = job.labour || "";
+      document.getElementById("criticalPath").textContent = job.criticalPath || "";
+      document.getElementById("reality").textContent      = job.reality || "";
+      document.getElementById("next").textContent         = job.next || "";
+
+      // FIX: Data Confidence as coloured badge
+      const confEl = document.getElementById("dataConfidence");
+      confEl.textContent = job.dataConfidence || "Unknown";
+      confEl.classList.add(confidenceClass(job.dataConfidence));
+
+      // Activity log
+      const activityWrap = document.getElementById("activity");
+      const items = job.activity || [];
+
+      if (items.length === 0) {
+        activityWrap.innerHTML = `<div class="day"><div class="day-text">No activity logged.</div></div>`;
+      } else {
+        activityWrap.innerHTML = items.map(item => `
+          <div class="day">
+            <div class="day-label">${item.day}</div>
+            <div class="day-text">${item.text}</div>
+          </div>
+        `).join("");
+      }
+    }
+  </script>
+</body>
+</html>
 
